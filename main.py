@@ -5,10 +5,11 @@ import pickle
 from exif import Image
 from pathlib import Path
 from shutil import copyfile
+import argparse
 
 
-SRC_ROOT="/mnt/raspishare/takeout/Takeout/Google Fotos"
-DEST_ROOT="/mnt/raspishare/bilder"
+#SRC_ROOT="/mnt/raspishare/takeout/Takeout/Google Fotos"
+#DEST_ROOT="/mnt/raspishare/bilder"
 FILEEXT = [".jpg", ".jpeg"]
 FOTOPICKLE = "./foto.pickle"
 
@@ -65,13 +66,23 @@ def find_files(path, filter=[]):
             if os.path.splitext(filename)[1] in filter:
                 yield os.path.join(dirpath, filename)
 
+def get_cmd_parser():
+    action_choices = [
+        'list',
+    ]
+    parser = argparse.ArgumentParser(description="Imagescrap")
+    parser.add_argument('--srcpath', '-s')
+    parser.add_argument('--destpath', '-d')
+    return parser
+
 if __name__ == '__main__':
     fotos = load_foto_pickle(FOTOPICKLE)
+    args = get_cmd_parser().parse_args()
     i = 0
-    for f in find_files(SRC_ROOT, FILEEXT):
+    for f in find_files(args.srcpath, FILEEXT):
         if not f in fotos:
             i += 1
-            copy_foto(f, DEST_ROOT)
+            copy_foto(f, args.destpath)
             fotos.append(f)
 
         if i > 10:
