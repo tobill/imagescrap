@@ -55,7 +55,6 @@ def determine_date_by_filename(file_path):
 
 def copy_foto(file_path, dest):
     exif_data = get_exif_data(file_path)
-    print(exif_data)
     if "EXIF:DateTimeOriginal" in exif_data:
         dt = exif_data["EXIF:DateTimeOriginal"]
         dt = datetime.datetime.strptime(dt, "%Y:%m:%d %H:%M:%S")
