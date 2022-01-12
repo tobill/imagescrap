@@ -2,17 +2,13 @@ import datetime, time
 import os
 import os.path
 import pickle
-from exif import Image
+import exiftool
 from pathlib import Path
 from shutil import copyfile
 import argparse
 
-
-#SRC_ROOT="/mnt/raspishare/takeout/Takeout/Google Fotos"
-#DEST_ROOT="/mnt/raspishare/bilder"
 FILEEXT = [".jpg", ".jpeg"]
 FOTOPICKLE = "./foto.pickle"
-
 
 def load_foto_pickle(pickle_file):
     if not os.path.exists(pickle_file):
@@ -24,8 +20,8 @@ def save_foto_pickle(fotos, pickle_file):
     pickle.dump(fotos, open(pickle_file, "wb"))
 
 def get_exif_data(file_path):
-    with open(file_path, 'rb') as image_file:
-        exifdata = Image(image_file)
+    with exiftool.ExifTool() as et:
+        exifdata = et.get_metadata(file_path)
         return exifdata
 
 def get_folder_name(datestring, dest):
@@ -51,11 +47,12 @@ def increment_file_dest(file_dest):
 
 def copy_foto(file_path, dest):
     exif_data = get_exif_data(file_path)
-    dt = exif_data.get("datetime_original", "") if "datetime_original" in exif_data.list_all() else None
+    dt = exif_data['EXIF:DateTimeOriginal'] if "EXIF:DateTimeOriginal" in exif_data else None
     folder_name = get_folder_name(dt, dest)
     file_name = os.path.basename(file_path)
     file_dest = os.path.join(folder_name, file_name)
     file_dest = increment_file_dest(file_dest)
+    print("copy {0} to {1}".format(file_name, file_dest))
     copyfile(file_path, file_dest)
 
 
@@ -88,4 +85,4 @@ if __name__ == '__main__':
         if i > 10:
             break
         #copyfile(f)
-    save_foto_pickle(fotos, FOTOPICKLE)
+    #save_foto_pickle(fotos, FOTOPICKLE)
