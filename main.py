@@ -94,7 +94,8 @@ if __name__ == '__main__':
     i = 0
     for f in find_files(args.srcpath, FILEEXT):
         if not f in fotos:
-            i = i +1 if copy_foto(f, args.destpath) else i
+            i = i +1
+            copy_foto(f, args.destpath)
             fotos.append(f)
             if i % 10 == 0:
                 print("save pickel {0}".format(FOTOPICKLE))
