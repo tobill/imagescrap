@@ -82,7 +82,11 @@ if __name__ == '__main__':
             copy_foto(f, args.destpath)
             fotos.append(f)
 
-        if i > 10:
+        if i % 10 == 0:
+            print("save pickel {0}".format(FOTOPICKLE))
+            save_foto_pickle(fotos, FOTOPICKLE)
+        if i > 1000:
             break
         #copyfile(f)
-    #save_foto_pickle(fotos, FOTOPICKLE)
+    print("save pickel {0}".format(FOTOPICKLE))
+    save_foto_pickle(fotos, FOTOPICKLE)
