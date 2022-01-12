@@ -91,17 +91,16 @@ def get_cmd_parser():
 if __name__ == '__main__':
     fotos = load_foto_pickle(FOTOPICKLE)
     args = get_cmd_parser().parse_args()
-    copy_foto(args.srcpath, args.destpath)
-    # i = 0
-    # for f in find_files(args.srcpath, FILEEXT):
-    #     if not f in fotos:
-    #         i = i +1 if copy_foto(f, args.destpath) else i
-    #         fotos.append(f)
-    #         if i % 10 == 0:
-    #             print("save pickel {0}".format(FOTOPICKLE))
-    #             save_foto_pickle(fotos, FOTOPICKLE)
-    #     if i > 1000:
-    #         break
-    #     #copyfile(f)
-    # print("save pickel {0}".format(FOTOPICKLE))
-    # save_foto_pickle(fotos, FOTOPICKLE)
+    i = 0
+    for f in find_files(args.srcpath, FILEEXT):
+        if not f in fotos:
+            i = i +1 if copy_foto(f, args.destpath) else i
+            fotos.append(f)
+            if i % 10 == 0:
+                print("save pickel {0}".format(FOTOPICKLE))
+                save_foto_pickle(fotos, FOTOPICKLE)
+        if i > 1000:
+            break
+        #copyfile(f)
+    print("save pickel {0}".format(FOTOPICKLE))
+    save_foto_pickle(fotos, FOTOPICKLE)
