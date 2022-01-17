@@ -95,13 +95,17 @@ def correct_name(fpath):
     if MIMETYPE_EXT[exifdata['File:MIMEType']] != file_ext:
         fnew = "{0}{1}".format(filebase, MIMETYPE_EXT[exifdata['File:MIMEType']])
         rename_file(fpath, fnew)
+        print('correct extension from {0} to {1}'.format(fpath, fnew))
         fpath = fnew
     filename = os.path.basename(fpath)
     dpath = os.path.dirname(fpath)
     filebase, file_ext = os.path.splitext(filename)
-    print(filebase)
     new_filebase = re.sub('[^\w\s-]', '_', filebase).strip()
+    if filebase == new_filebase:
+        return
     new_filebase = re.sub('[-\s]+', '_', new_filebase).strip('_')
     fnew = "{0}{1}".format(os.path.join(dpath, new_filebase), file_ext)
-    print(fnew)
+    rename_file(fpath, fnew)
+    print('correct extension from {0} to {1}'.format(fpath, fnew))
+
 
