@@ -6,10 +6,6 @@ import argparse
 FILEEXT = [".jpg", ".jpeg", ".mp4", ".mov"]
 FOTO_COPY_PICKLE = "./foto.pickle"
 FOTO_RENAME_PICKLE = "./foto_rename.pickle"
-MIMETYPE_EXT =  {
-    'image/jpeg': '.jpg',
-    'video/mp4': '.mp4',
-}
 
 def get_cmd_parser():
     action_choices = [
@@ -45,18 +41,16 @@ def rename_ext_action(args):
     for f in ic.find_files(args.srcpath, FILEEXT):
         if not f in fotos:
             i = i + 1
-            exifdata = ic.get_exif_data(f)
-            filebase, file_ext = os.path.splitext(f)
-            if MIMETYPE_EXT[exifdata['File:MIMEType']] != file_ext:
-                fnew = "{0}{1}".format(filebase, MIMETYPE_EXT[exifdata['File:MIMEType']])
-                ic.rename_extension(f, fnew)
+            ic.correct_name(f)
+            fotos.append(f)
             if i % 100 == 0:
-                print("save pickel {0}".format(FOTO_COPY_PICKLE))
-                ic.save_foto_pickle(fotos, FOTO_COPY_PICKLE)
+                break
+                print("save pickel {0}".format(FOTO_RENAME_PICKLE_PICKLE))
+                ic.save_foto_pickle(fotos, FOTO_RENAME_PICKLE_PICKLE)
         if i > 10000:
             break
-    print("save pickel {0}".format(FOTO_COPY_PICKLE))
-    ic.save_foto_pickle(fotos, FOTO_COPY_PICKLE)
+    print("save pickel {0}".format(FOTO_RENAME_PICKLE))
+    ic.save_foto_pickle(fotos, FOTO_RENAME_PICKLE)
 
 if __name__ == '__main__':
     args = get_cmd_parser().parse_args()

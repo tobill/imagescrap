@@ -9,6 +9,13 @@ import exiftool
 from pathlib import Path
 from shutil import copyfile
 
+MIMETYPE_EXT =  {
+    'image/jpeg': '.jpg',
+    'video/mp4': '.mp4',
+}
+
+FILECHARPATTERN = re.compile('^[\w\-]+$')
+
 def load_foto_pickle(pickle_file):
     if not os.path.exists(pickle_file):
         return []
@@ -76,6 +83,25 @@ def find_files(path, filter=[]):
                 yield os.path.join(dirpath, filename)
 
 
-def rename_extension(fold, fnew):
+def rename_file(fold, fnew):
+    fnew = increment_file_dest(fnew)
     print("rename {0} to {1}".format(fold, fnew))
     shutil.move(fold, fnew)
+
+
+def correct_name(fpath):
+    exifdata = get_exif_data(fpath)
+    filebase, file_ext = os.path.splitext(fpath)
+    if MIMETYPE_EXT[exifdata['File:MIMEType']] != file_ext:
+        fnew = "{0}{1}".format(filebase, MIMETYPE_EXT[exifdata['File:MIMEType']])
+        rename_file(fpath, fnew)
+        fpath = fnew
+    filename = os.path.basename(fpath)
+    dpath = os.path.dirname(fpath)
+    filebase, file_ext = os.path.splitext(filename)
+    print(filebase)
+    new_filebase = re.sub('[^\w\s-]', '_', filebase).strip()
+    new_filebase = re.sub('[-\s]+', '_', new_filebase).strip('_')
+    fnew = "{0}{1}".format(os.path.join(dpath, new_filebase), file_ext)
+    print(fnew)
+
