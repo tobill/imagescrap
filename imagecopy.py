@@ -4,6 +4,7 @@ import os.path
 import pickle
 import re
 import shutil
+import hashlib
 
 import exiftool
 from pathlib import Path
@@ -109,3 +110,9 @@ def correct_name(fpath):
     print('correct extension from {0} to {1}'.format(fpath, fnew))
 
 
+def get_hash_of_file(f):
+    sha_hash = hashlib.sha256()
+    with open(f, 'rb') as fob:
+        content = fob.read()
+        sha_hash.update(content)
+    return sha_hash.hexdigest()

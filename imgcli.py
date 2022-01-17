@@ -1,3 +1,4 @@
+import json
 import os
 import dbm
 
@@ -59,7 +60,27 @@ def compute_hash_action(args):
     if not args.dbfile:
         print("dbm file missing")
         return
-
+    dbreversname = args.dbfile + '_r'
+    dbname =  args.dbfile
+    i = 0
+    with dbm.open(dbname, 'c') as db:
+        with dbm.open(dbreversname, 'c') as dbr:
+            for f in ic.find_files(args.srcpath, FILEEXT):
+                if not f in dbr:
+                    i = i + 1
+                    hash = ic.get_hash_of_file(f)
+                    dbr[f] = hash
+                    print('Hash: {0}'.format(hash))
+                    if hash in db:
+                        v = json.loads(db[hash])
+                        v.append(f)
+                        db[hash] = json.dumps(v)
+                        print('already there, updateing: {0}'.format(v))
+                    else:
+                        print('new file adding to db {0}'.format(f))
+                        db[hash] = json.dumps([f])
+                if i > 10:
+                    break
 
 if __name__ == '__main__':
     args = get_cmd_parser().parse_args()
